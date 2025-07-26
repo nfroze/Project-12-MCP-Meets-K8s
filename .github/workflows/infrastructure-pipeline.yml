@@ -1,0 +1,43 @@
+name: Infrastructure Security Scan
+
+on:
+  push:
+    paths:
+      - 'terraform/**'
+      - '.github/workflows/infrastructure-pipeline.yml'
+  pull_request:
+    paths:
+      - 'terraform/**'
+
+jobs:
+  scan-terraform:
+    name: Scan Infrastructure as Code
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: 1.6.0
+
+    - name: Run Checkov scan
+      uses: bridgecrewio/checkov-action@v12
+      with:
+        directory: terraform/
+        framework: terraform
+        output_format: cli
+        soft_fail: true
+
+    - name: Terraform format check
+      run: |
+        cd terraform
+        terraform fmt -check -recursive || echo "::warning::Terraform files need formatting. Run 'terraform fmt'"
+
+    - name: Terraform validate
+      run: |
+        cd terraform
+        terraform init -backend=false
+        terraform validate

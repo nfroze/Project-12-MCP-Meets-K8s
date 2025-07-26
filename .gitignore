@@ -1,0 +1,23 @@
+# Node.js
+node_modules/
+*.log
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# Environment & Security
+.env
+*.pem
+*.key
+
+# OS
+.DS_Store
+
+# IDE
+.vscode/
+
+# Build artifacts
+sbom.json
