@@ -18,6 +18,3 @@ node_modules/
 
 # IDE
 .vscode/
-
-# Build artifacts
-sbom.json

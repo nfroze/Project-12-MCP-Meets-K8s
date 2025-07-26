@@ -10,77 +10,40 @@ env:
   DOCKER_IMAGE: nfroze/mcp-k8s-app
 
 jobs:
-  security-scan:
-    name: Security Scan & Build
+  build-scan-push:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout code
+    - name: Checkout
       uses: actions/checkout@v4
 
-    # 1. SAST - Semgrep
-    - name: Run Semgrep
+    - name: Semgrep scan
       uses: returntocorp/semgrep-action@v1
       with:
         config: auto
         
-    # 2. Secret Scanning - Gitleaks
-    - name: Run Gitleaks
+    - name: Gitleaks scan
       uses: gitleaks/gitleaks-action@v2
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    # 3. Build container (needed for scanning)
-    - name: Build Docker image
+    - name: Trivy dependency scan
+      run: docker run --rm -v ${{ github.workspace }}/app:/app aquasec/trivy fs /app
+
+    - name: Build image
       working-directory: ./app
-      run: |
-        docker build -t ${{ env.DOCKER_IMAGE }}:${{ github.sha }} .
-        docker tag ${{ env.DOCKER_IMAGE }}:${{ github.sha }} ${{ env.DOCKER_IMAGE }}:latest
+      run: docker build -t ${{ env.DOCKER_IMAGE }}:latest .
 
-    # 4. Container Scanning - Trivy
-    - name: Run Trivy container scan
+    - name: Trivy scan
       uses: aquasecurity/trivy-action@master
       with:
-        image-ref: ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
-        format: 'table'
-        exit-code: '0'
-        severity: 'CRITICAL,HIGH'
+        image-ref: ${{ env.DOCKER_IMAGE }}:latest
+        exit-code: '1'
+        severity: 'CRITICAL'
 
-    # 5. SCA - Trivy filesystem scan
-    - name: Run Trivy dependency scan
-      uses: aquasecurity/trivy-action@master
-      with:
-        scan-type: 'fs'
-        scan-ref: './app'
-        format: 'table'
-        exit-code: '0'
-        severity: 'CRITICAL,HIGH'
-
-    # 6. Generate SBOM
-    - name: Generate SBOM
-      uses: aquasecurity/trivy-action@master
-      with:
-        image-ref: ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
-        format: 'spdx-json'
-        output: 'sbom.json'
-        scan-type: 'image'
-
-    - name: Upload SBOM
-      uses: actions/upload-artifact@v3
-      with:
-        name: sbom
-        path: sbom.json
-
-    # 7. Push to DockerHub if all scans passed
-    - name: Login to DockerHub
+    - name: Login DockerHub
       uses: docker/login-action@v3
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Push to DockerHub
-      run: |
-        docker push ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
-        docker push ${{ env.DOCKER_IMAGE }}:latest
-        echo "✅ Image pushed: ${{ env.DOCKER_IMAGE }}:${{ github.sha }}"
-        echo "✅ Image pushed: ${{ env.DOCKER_IMAGE }}:latest"
+    - name: Push image
+      run: docker push ${{ env.DOCKER_IMAGE }}:latest
