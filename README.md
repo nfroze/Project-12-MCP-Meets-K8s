@@ -2,6 +2,15 @@
 
 AI-Powered Kubernetes Operations with Enterprise Security
 
+## TLDR
+
+Built a production-grade DevSecOps platform demonstrating true shift-left security with automated scanning at every stage. Deployed containerized applications to AWS EKS using GitOps principles, with ArgoCD managing deployments from Git commits. Integrated comprehensive observability through Prometheus and Grafana for real-time metrics and alerting. 
+
+**The innovation**: Pioneered one of the first Kubernetes MCP (Model Context Protocol) integrations, enabling natural language queries like "What's broken in my cluster?" directly in Claude Desktop. From infrastructure provisioning to AI-powered operations, every component is security-scanned, automatically deployed, and monitored.
+
+**[K8s Summary](docs/summary.md)**
+**[K8s Full Report](docs/report.md)**
+
 ## 🚀 Overview
 
 This project demonstrates a complete DevSecOps pipeline featuring:
