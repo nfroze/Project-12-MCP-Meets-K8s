@@ -1,0 +1,61 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mcp-app
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mcp-k8s-app
+  namespace: mcp-app
+  labels:
+    app: mcp-k8s-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mcp-k8s-app
+  template:
+    metadata:
+      labels:
+        app: mcp-k8s-app
+    spec:
+      containers:
+      - name: app
+        image: nfroze/mcp-k8s-app:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: PORT
+          value: "3000"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mcp-k8s-app
+  namespace: mcp-app
+spec:
+  selector:
+    app: mcp-k8s-app
+  ports:
+  - port: 80
+    targetPort: 3000
+  type: LoadBalancer
