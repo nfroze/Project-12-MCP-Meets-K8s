@@ -21,6 +21,27 @@ This project demonstrates a complete DevSecOps pipeline featuring:
 - **Full observability** with Prometheus/Grafana
 - **AI-powered cluster operations** using Claude MCP (Model Context Protocol)
 
+## 📸 Project Screenshots
+
+### 🤖 MCP Integration in Action
+
+![Claude Summary Prompt](Screenshots/1.png)
+*Natural language query to Claude asking for cluster health summary - MCP server connects and provides instant insights*
+
+![Claude Full Report Prompt](Screenshots/2.png)
+*Comprehensive cluster analysis generated through MCP, including cost optimization recommendations and KPI frameworks*
+
+### 🚀 Live Applications
+
+![Live Webapp](Screenshots/3.png)
+*Project 12 dashboard showcasing the complete DevSecOps pipeline with MCP integration prominently featured*
+
+![ArgoCD Dashboard](Screenshots/4.png)
+*ArgoCD managing both applications via GitOps - showing healthy and synced status for continuous deployment*
+
+![Grafana Dashboard](Screenshots/5.png)
+*Real-time cluster metrics visualization showing resource utilization across namespaces with Prometheus data*
+
 ## 🏗️ Architecture
 
 ```
