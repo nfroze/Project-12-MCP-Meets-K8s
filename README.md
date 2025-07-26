@@ -1,4 +1,4 @@
-# Project 12: MCP Meets K8s
+# 👑 Project 12: MCP Meets K8s
 
 AI-Powered Kubernetes Operations with Enterprise Security
 
