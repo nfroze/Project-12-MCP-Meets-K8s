@@ -174,13 +174,6 @@ npm install
 
 3. Restart Claude Desktop
 
-## 📊 Accessing Services
-
-All services are publicly accessible via AWS LoadBalancers:
-
-- **ArgoCD**: `https://[your-argocd-lb].elb.amazonaws.com`
-- **Grafana**: `http://[your-grafana-lb].elb.amazonaws.com` (admin/prom-operator)
-- **Application**: `http://[your-app-lb].elb.amazonaws.com`
 
 ## 🤖 MCP Integration
 
@@ -189,18 +182,6 @@ The MCP server enables natural language queries:
 - "Show me resource usage"
 - "Generate a cluster health report"
 - "Which namespace is using the most CPU?"
-
-## 💰 Cost Optimization
-
-This entire project runs for under $5/hour:
-- t3.medium instances (2 nodes)
-- Single NAT gateway
-- Temporary LoadBalancers for demo
-
-**Remember to destroy resources after demo:**
-```bash
-terraform destroy
-```
 
 ## 🎯 Project Achievements
 
