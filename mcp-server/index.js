@@ -6,7 +6,17 @@ import k8s from '@kubernetes/client-node';
 
 // Initialize Kubernetes client
 const kc = new k8s.KubeConfig();
-kc.loadFromDefault();
+
+// Try multiple config locations
+try {
+  // First try default location
+  kc.loadFromDefault();
+} catch (error) {
+  // Try Windows default location
+  const homedir = process.env.USERPROFILE || process.env.HOME;
+  const kubeConfigPath = `${homedir}/.kube/config`;
+  kc.loadFromFile(kubeConfigPath);
+}
 
 const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
 const appsApi = kc.makeApiClient(k8s.AppsV1Api);
@@ -57,8 +67,8 @@ async function getResourceUsage() {
       const metrics = nodeMetrics.items[i];
       const allocatable = node.status.allocatable;
       
-      const cpuUsage = (parseInt(metrics.usage.cpu) / parseInt(allocatable.cpu) * 100).toFixed(1);
-      const memUsage = (parseInt(metrics.usage.memory) / parseInt(allocatable.memory) * 100).toFixed(1);
+      const cpuUsage = (parseInt(metrics.usage.cpu) / 1000000000 / parseInt(allocatable.cpu) * 100).toFixed(1);
+      const memUsage = (parseInt(metrics.usage.memory) / 1024 / parseInt(allocatable.memory) * 100).toFixed(1);
       
       return {
         name: node.metadata.name,
@@ -197,10 +207,13 @@ function getAge(timestamp) {
 }
 
 function parseCpu(cpu) {
+  if (cpu.endsWith('n')) {
+    return parseInt(cpu) / 1000000; // nanocores to millicores
+  }
   if (cpu.endsWith('m')) {
     return parseInt(cpu);
   }
-  return parseInt(cpu) * 1000;
+  return parseInt(cpu) * 1000; // cores to millicores
 }
 
 function parseMemory(memory) {

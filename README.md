@@ -39,7 +39,7 @@ This project demonstrates a complete DevSecOps pipeline featuring:
 - ✅ **Application code** analyzed with Semgrep
 - ✅ **Secrets detection** via Gitleaks
 - ✅ **Container security** with Trivy
-- ✅ **SBOM generation** for supply chain visibility
+- ✅ **Automated deployment** if all scans pass
 
 ## 🛠️ Tech Stack
 
@@ -59,14 +59,18 @@ This project demonstrates a complete DevSecOps pipeline featuring:
 - kubectl
 - Docker
 - Helm 3
+- Node.js >= 18
 
-## 🚀 Quick Start
+## 🚀 Deployment Guide
 
 ### 1. Infrastructure Deployment
 
 ```bash
-# Review security scan results in GitHub Actions first!
+# Clone the repository
+git clone https://github.com/nfroze/Project-12-MCP-Meets-K8s.git
+cd Project-12-MCP-Meets-K8s
 
+# Deploy infrastructure
 cd terraform
 terraform init
 terraform plan
@@ -76,70 +80,118 @@ terraform apply
 aws eks update-kubeconfig --region eu-west-2 --name mcp-k8s-cluster
 ```
 
-### 2. Install ArgoCD
+### 2. Application Deployment
+
+The application pipeline automatically:
+- Scans code with Semgrep
+- Checks for secrets with Gitleaks
+- Scans dependencies with Trivy
+- Builds and pushes to DockerHub
+
+### 3. Install ArgoCD
 
 ```bash
+# Install ArgoCD
 kubectl create namespace argocd
-helm repo add argo https://argoproj.github.io/argo-helm
-helm install argocd argo/argo-cd -n argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
 # Get admin password
 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+
+# Make ArgoCD publicly accessible
+kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
 ```
 
-### 3. Install Monitoring Stack
+### 4. Deploy Applications via GitOps
 
 ```bash
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-helm install monitoring prometheus-community/kube-prometheus-stack
+# Deploy your app
+kubectl apply -f k8s/argocd-app.yaml
+
+# Deploy monitoring stack
+kubectl apply -f k8s/monitoring.yaml
 ```
+
+### 5. Install Metrics Server (for MCP)
+
+```bash
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+```
+
+### 6. Configure MCP Server
+
+1. Install dependencies:
+```bash
+cd mcp-server
+npm install
+```
+
+2. Add to Claude Desktop config (`%APPDATA%\Claude\claude_desktop_config.json`):
+```json
+{
+  "mcpServers": {
+    "k8s-health": {
+      "command": "node",
+      "args": ["C:/path/to/mcp-server/index.js"],
+      "env": {
+        "KUBECONFIG": "C:/Users/[YourName]/.kube/config"
+      }
+    }
+  }
+}
+```
+
+3. Restart Claude Desktop
 
 ## 📊 Accessing Services
 
-```bash
-# ArgoCD UI
-kubectl port-forward svc/argocd-server -n argocd 8080:443
+All services are publicly accessible via AWS LoadBalancers:
 
-# Grafana
-kubectl port-forward svc/monitoring-grafana 3000:80
-
-# Application
-kubectl port-forward svc/mcp-k8s-app 8000:80
-```
+- **ArgoCD**: `https://[your-argocd-lb].elb.amazonaws.com`
+- **Grafana**: `http://[your-grafana-lb].elb.amazonaws.com` (admin/prom-operator)
+- **Application**: `http://[your-app-lb].elb.amazonaws.com`
 
 ## 🤖 MCP Integration
 
-The MCP server enables natural language queries like:
+The MCP server enables natural language queries:
 - "What pods are unhealthy?"
 - "Show me resource usage"
 - "Generate a cluster health report"
+- "Which namespace is using the most CPU?"
 
 ## 💰 Cost Optimization
 
-This entire project runs for under $5:
+This entire project runs for under $5/hour:
+- t3.medium instances (2 nodes)
 - Single NAT gateway
-- t3.medium instances
-- Aggressive auto-scaling policies
+- Temporary LoadBalancers for demo
 
-## 🎯 Project Goals
+**Remember to destroy resources after demo:**
+```bash
+terraform destroy
+```
 
-1. **Demonstrate DevSecOps best practices** with security scanning at every stage
-2. **Showcase modern deployment patterns** using GitOps and Kubernetes
-3. **Pioneer AI operations** with one of the first MCP Kubernetes integrations
-4. **Prove that learning doesn't require expensive resources** - built for under $5
+## 🎯 Project Achievements
 
-## 📈 Results
+1. **Security First**: Every commit scanned, every image verified
+2. **True GitOps**: All deployments tracked in Git
+3. **AI Operations**: Natural language cluster management
+4. **Production Ready**: Same patterns used in enterprise
+5. **Cost Effective**: Full platform under $5
 
-- 🔒 **100% security gate compliance**
-- 🚀 **4-hour build time**
-- 💰 **Under $5 total cost**
-- 🤖 **First-of-its-kind MCP integration**
+## 📸 Screenshots
+
+- Infrastructure security scan passing
+- Application security pipeline
+- ArgoCD managing deployments
+- Grafana showing cluster metrics
+- MCP querying cluster health
 
 ## 🧑‍💻 Author
 
 **Noah Frost** - Former Police Constable turned DevSecOps Engineer
 
-- 11 production-ready projects in 3 months
+- 12 production-ready projects in 3 months
 - Self-taught with zero mentorship
 - From protecting streets to protecting cloud infrastructure
 
