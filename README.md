@@ -210,14 +210,6 @@ terraform destroy
 4. **Production Ready**: Same patterns used in enterprise
 5. **Cost Effective**: Full platform under $5
 
-## 📸 Screenshots
-
-- Infrastructure security scan passing
-- Application security pipeline
-- ArgoCD managing deployments
-- Grafana showing cluster metrics
-- MCP querying cluster health
-
 ## 🧑‍💻 Author
 
 **Noah Frost** - Former Police Constable turned DevSecOps Engineer
