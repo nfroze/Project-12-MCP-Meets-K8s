@@ -198,7 +198,3 @@ The MCP server enables natural language queries:
 - 12 production-ready projects in 3 months
 - Self-taught with zero mentorship
 - From protecting streets to protecting cloud infrastructure
-
-## 📝 License
-
-This project is open source and available under the [MIT License](LICENSE).
