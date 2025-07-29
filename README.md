@@ -8,9 +8,9 @@ Built a production-grade DevSecOps platform demonstrating true shift-left securi
 
 **The innovation**: Pioneered one of the first Kubernetes MCP (Model Context Protocol) integrations, enabling natural language queries like "What's broken in my cluster?" directly in Claude Desktop. From infrastructure provisioning to AI-powered operations, every component is security-scanned, automatically deployed, and monitored.
 
-**[📝 K8s Summary](docs/summary.md)**
+**[📝 K8s Summary](documents/summary.md)**
   
-**[🗂️ K8s Full Report](docs/report.md)**
+**[🗂️ K8s Full Report](documents/report.md)**
 
 ## 🚀 Overview
 
