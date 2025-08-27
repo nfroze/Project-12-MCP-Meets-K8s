@@ -1,48 +1,10 @@
-# ☸️ Project 12: MCP Meets K8s
+# Project 12: MCP Meets K8s
 
-AI-Powered Kubernetes Operations with Enterprise Security
+## Overview
 
-## TLDR
+Model Context Protocol server for Kubernetes operations. AWS EKS cluster with ArgoCD GitOps deployment. Prometheus and Grafana monitoring. Security scanning with Checkov, Semgrep, Gitleaks, and Trivy.
 
-Built a production-grade DevSecOps platform demonstrating true shift-left security with automated scanning at every stage. Deployed containerized applications to AWS EKS using GitOps principles, with ArgoCD managing deployments from Git commits. Integrated comprehensive observability through Prometheus and Grafana for real-time metrics and alerting. 
-
-**The innovation**: Pioneered one of the first Kubernetes MCP (Model Context Protocol) integrations, enabling natural language queries like "What's broken in my cluster?" directly in Claude Desktop. From infrastructure provisioning to AI-powered operations, every component is security-scanned, automatically deployed, and monitored.
-
-**[📝 K8s Summary](documents/summary.md)**
-  
-**[🗂️ K8s Full Report](documents/report.md)**
-
-## 🚀 Overview
-
-This project demonstrates a complete DevSecOps pipeline featuring:
-- **Security-first infrastructure** deployed to AWS EKS
-- **Comprehensive security scanning** (SAST, SCA, Secrets, IaC)
-- **GitOps deployment** via ArgoCD
-- **Full observability** with Prometheus/Grafana
-- **AI-powered cluster operations** using Claude MCP (Model Context Protocol)
-
-## 📸 Project Screenshots
-
-### 🤖 MCP Integration in Action
-
-![Claude Summary Prompt](screenshots/1.png)
-*Natural language query to Claude asking for cluster health summary - MCP server connects and provides instant insights*
-
-![Claude Full Report Prompt](screenshots/2.png)
-*Comprehensive cluster analysis generated through MCP, including cost optimization recommendations and KPI frameworks*
-
-### 🚀 Live Applications
-
-![Live Webapp](screenshots/3.png)
-*Project 12 dashboard showcasing the complete DevSecOps pipeline with MCP integration prominently featured*
-
-![ArgoCD Dashboard](screenshots/4.png)
-*ArgoCD managing both applications via GitOps - showing healthy and synced status for continuous deployment*
-
-![Grafana Dashboard](screenshots/5.png)
-*Real-time cluster metrics visualization showing resource utilization across namespaces with Prometheus data*
-
-## 🏗️ Architecture
+## Architecture
 
 ```
 ├── Infrastructure (Terraform)
@@ -64,100 +26,62 @@ This project demonstrates a complete DevSecOps pipeline featuring:
     └── Natural language K8s queries
 ```
 
-## 🔒 Security Controls
+## Technologies
 
-- ✅ **Infrastructure as Code** scanned with Checkov
-- ✅ **Application code** analyzed with Semgrep
-- ✅ **Secrets detection** via Gitleaks
-- ✅ **Container security** with Trivy
-- ✅ **Automated deployment** if all scans pass
+- Cloud: AWS EKS (eu-west-2)
+- IaC: Terraform
+- CI/CD: GitHub Actions
+- GitOps: ArgoCD
+- Monitoring: Prometheus + Grafana
+- AI: Claude MCP Server
+- Security: Checkov, Semgrep, Trivy, Gitleaks
 
-## 🛠️ Tech Stack
+## Implementation
 
-- **Cloud**: AWS EKS (eu-west-2)
-- **IaC**: Terraform
-- **CI/CD**: GitHub Actions
-- **GitOps**: ArgoCD
-- **Monitoring**: Prometheus + Grafana
-- **AI**: Claude MCP Server
-- **Security**: Checkov, Semgrep, Trivy, Gitleaks
-
-## 📋 Prerequisites
-
-- AWS Account with appropriate permissions
-- AWS CLI configured
-- Terraform >= 1.6.0
-- kubectl
-- Docker
-- Helm 3
-- Node.js >= 18
-
-## 🚀 Deployment Guide
-
-### 1. Infrastructure Deployment
+### Infrastructure Deployment
 
 ```bash
-# Clone the repository
-git clone https://github.com/nfroze/Project-12-MCP-Meets-K8s.git
-cd Project-12-MCP-Meets-K8s
-
-# Deploy infrastructure
 cd terraform
 terraform init
 terraform plan
 terraform apply
 
-# Configure kubectl
 aws eks update-kubeconfig --region eu-west-2 --name mcp-k8s-cluster
 ```
 
-### 2. Application Deployment
-
-The application pipeline automatically:
-- Scans code with Semgrep
-- Checks for secrets with Gitleaks
-- Scans dependencies with Trivy
-- Builds and pushes to DockerHub
-
-### 3. Install ArgoCD
+### ArgoCD Installation
 
 ```bash
-# Install ArgoCD
 kubectl create namespace argocd
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
-# Get admin password
 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
 
-# Make ArgoCD publicly accessible
 kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
 ```
 
-### 4. Deploy Applications via GitOps
+### Application Deployment
 
 ```bash
-# Deploy your app
 kubectl apply -f k8s/argocd-app.yaml
-
-# Deploy monitoring stack
 kubectl apply -f k8s/monitoring.yaml
 ```
 
-### 5. Install Metrics Server (for MCP)
+### Metrics Server
 
 ```bash
 kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
 ```
 
-### 6. Configure MCP Server
+### MCP Server Configuration
 
-1. Install dependencies:
+Install dependencies:
 ```bash
 cd mcp-server
 npm install
 ```
 
-2. Add to Claude Desktop config (`%APPDATA%\Claude\claude_desktop_config.json`):
+Add to Claude Desktop config (`%APPDATA%\Claude\claude_desktop_config.json`):
 ```json
 {
   "mcpServers": {
@@ -172,29 +96,56 @@ npm install
 }
 ```
 
-3. Restart Claude Desktop
+## Features
 
+### Security Scanning
+- Infrastructure as Code scanning with Checkov
+- Application code analysis with Semgrep
+- Secret detection via Gitleaks
+- Container security with Trivy
 
-## 🤖 MCP Integration
+### GitOps Workflow
+- ArgoCD manages deployments from Git
+- Automated synchronisation
+- Application health monitoring
 
+### MCP Integration
 The MCP server enables natural language queries:
-- "What pods are unhealthy?"
-- "Show me resource usage"
-- "Generate a cluster health report"
-- "Which namespace is using the most CPU?"
+- Pod health status
+- Resource usage information
+- Cluster health reports
+- Namespace resource consumption
 
-## 🎯 Project Achievements
+### Monitoring
+- Prometheus metrics collection
+- Grafana dashboards
+- Real-time resource visualisation
 
-1. **Security First**: Every commit scanned, every image verified
-2. **True GitOps**: All deployments tracked in Git
-3. **AI Operations**: Natural language cluster management
-4. **Production Ready**: Same patterns used in enterprise
-5. **Cost Effective**: Full platform under $5
+## Screenshots
 
-## 🧑‍💻 Author
+1. Natural language query to Claude for cluster health summary
+2. Comprehensive cluster analysis through MCP
+3. Project dashboard with DevSecOps pipeline
+4. ArgoCD managing applications via GitOps
+5. Grafana dashboard showing cluster metrics
 
-**Noah Frost** - Former Police Constable turned DevSecOps Engineer
+## Prerequisites
 
-- 12 production-ready projects in 3 months
-- Self-taught with zero mentorship
-- From protecting streets to protecting cloud infrastructure
+- AWS Account
+- AWS CLI configured
+- Terraform >= 1.6.0
+- kubectl
+- Docker
+- Helm 3
+- Node.js >= 18
+
+## Project Structure
+
+```
+Project-12-MCP-Meets-K8s/
+├── terraform/          # Infrastructure as Code
+├── mcp-server/        # MCP server implementation
+├── k8s/               # Kubernetes manifests
+├── .github/workflows/ # CI/CD pipelines
+└── screenshots/       # Documentation images
+```
