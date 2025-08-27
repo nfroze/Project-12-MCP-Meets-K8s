@@ -129,6 +129,12 @@ The MCP server enables natural language queries:
 4. [ArgoCD managing applications via GitOps](screenshots/4.png)
 5. [Grafana dashboard showing cluster metrics](screenshots/5.png)
 
+## Generated Documents
+
+- [K8s Summary](documents/summary.md)
+- [K8s Full Report](documents/report.md)
+
+
 ## Prerequisites
 
 - AWS Account
