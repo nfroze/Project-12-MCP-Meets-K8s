@@ -123,11 +123,11 @@ The MCP server enables natural language queries:
 
 ## Screenshots
 
-1. Natural language query to Claude for cluster health summary
-2. Comprehensive cluster analysis through MCP
-3. Project dashboard with DevSecOps pipeline
-4. ArgoCD managing applications via GitOps
-5. Grafana dashboard showing cluster metrics
+1. [Natural language query to Claude for cluster health summary](screenshots/1.png)
+2. [Comprehensive cluster analysis through MCP](screenshots/2.png)
+3. [Project dashboard with DevSecOps pipeline](screenshots/3.png)
+4. [ArgoCD managing applications via GitOps](screenshots/4.png)
+5. [Grafana dashboard showing cluster metrics](screenshots/5.png)
 
 ## Prerequisites
 
